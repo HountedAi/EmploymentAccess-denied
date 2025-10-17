@@ -1,76 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>System Error</title>
-  <style>
-    body {
-      background-color: black;
-      color: white; /* default text */
-      font-family: "Courier New", monospace;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      text-align: center;
-      overflow: hidden;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Vacation Day Audit</title>
+<style>
+  body {
+    background-color: black;
+    color: white;
+    font-family: "Courier New", monospace;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+    overflow: hidden;
+  }
 
-    .hidden { display: none; }
+  .hidden { display: none; }
+  .message { margin: 20px 0; font-size: 1.5rem; }
+  .fade-in { animation: fadeIn 1.5s ease forwards; opacity:0; }
+  @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
 
-    .glitch {
-      color: #ff4500; /* orange-red for final message */
-      text-shadow: 1px 1px #ff6347, -1px -1px #ff8c00;
-      animation: mildGlitch 2s infinite;
-    }
+  .blink { animation: blink 0.9s step-start infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
 
-    @keyframes mildGlitch {
-      0% { text-shadow: 1px 1px #ff6347, -1px -1px #ff8c00; }
-      50% { text-shadow: -1px 0 #ff6347, 1px 0 #ff8c00; }
-      100% { text-shadow: 1px -1px #ff6347, -1px 1px #ff8c00; }
-    }
+  /* Colors */
+  #analyzing { color: white; }
+  #match { color: #00ff00; font-weight: bold; }
+  #error { color: red; font-weight: bold; }
+  #consequence { color: red; font-weight: bold; text-align: left; }
 
-    .fade-in { animation: fadeIn 1.5s ease forwards; }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  /* glitch for final consequence */
+  .glitch {
+    text-shadow: 1px 1px #ff6347, -1px -1px #ff8c00;
+    animation: mildGlitch 2s infinite;
+  }
+  @keyframes mildGlitch {
+    0% { text-shadow: 1px 1px #ff6347, -1px -1px #ff8c00; }
+    50% { text-shadow: -1px 0 #ff6347, 1px 0 #ff8c00; }
+    100% { text-shadow: 1px -1px #ff6347, -1px 1px #ff8c00; }
+  }
 
-    .blink { animation: blink 0.9s step-start infinite; }
-    @keyframes blink { 50% { opacity: 0; } }
-
-    .message { margin: 20px 0; font-size: 1.4rem; }
-
-    #msg1 { color: red; font-weight: bold; } /* Error in red */
-    #msg2a { color: white; }                 /* Analyzing in white */
-    #msg2b { color: #00ff00; font-weight: bold; } /* Match found in green */
-    #msg3 { color: red; font-weight: bold; }  /* Final date in orange-red */
-
-    /* loading dots */
-    #dots { color: white; }
-  </style>
+  /* loading dots */
+  #dots { color: white; }
+</style>
 </head>
 <body>
-  <div id="msg1" class="message hidden">Error: You are not the authorized user.</div>
-  <div id="msg2a" class="message hidden">Analyzing face<span id="dots">...</span></div>
-  <div id="msg2b" class="message hidden fade-in">Match found.</div>
-  <div id="msg3" class="message hidden  fade-in">Contract with COWI end date has just been set to <span class="blink">October 31, 2025</span></div>
 
-  <script>
-    const dots = document.getElementById("dots");
-    let count = 0;
-    const loading = setInterval(() => {
-      count = (count + 1) % 4;
-      dots.textContent = '.'.repeat(count);
-    }, 400);
+<div id="analyzing" class="message hidden"></div>
+<div id="match" class="message hidden fade-in">Match found.</div>
+<div id="error" class="message hidden fade-in">You are not authorized for a vacation day. Other mandatory bonus applied:</div>
+<div id="consequence" class="message hidden fade-in"></div>
 
-    setTimeout(() => document.getElementById("msg1").classList.remove("hidden"), 1000);
-    setTimeout(() => document.getElementById("msg2a").classList.remove("hidden"), 3500);
-    setTimeout(() => {
-      document.getElementById("msg2a").classList.add("hidden");
-      document.getElementById("msg2b").classList.remove("hidden");
-      clearInterval(loading);
-    }, 6500);
-    setTimeout(() => document.getElementById("msg3").classList.remove("hidden"), 9000);
-  </script>
+<script>
+  const dots = document.createElement("span");
+  dots.id = "dots";
+  dots.textContent = "...";
+
+  const analyzing = document.getElementById("analyzing");
+  analyzing.appendChild(dots);
+
+  let count = 0;
+  const loading = setInterval(() => {
+    count = (count + 1) % 4;
+    dots.textContent = '.'.repeat(count);
+  }, 400);
+
+  // Beginning messages (randomized)
+  const startMessages = [
+    "Checking your eligibility for a free vacation day",
+    "Verifying vacation quota",
+    "Calculating remaining time-off balance",
+    "Assessing your relaxation potential",
+    "Analyzing your fun efficiency statisics"
+  ];
+
+  // Consequences (vacation-prank themed)
+  const consequences = [
+    "All vacation days converted to extra Teams meetings.",
+    "Your chair has been scheduled for a standing-only week.",
+    "Coffee breaks reduced by 50%.",
+    "Mandatory report submission during lunch hours.",
+    "Your desk plant gets the day off instead of you.",
+    "Extra paperwork added to your 'fun' quota.",
+    "Your calendar is blocked for random training sessions.",
+    "Your keyboard is now a hamster treadmill."
+  ];
+
+  // select a random start message
+  analyzing.textContent = startMessages[Math.floor(Math.random() * startMessages.length)];
+  analyzing.appendChild(dots);
+
+  // Display sequence
+  setTimeout(() => analyzing.classList.remove("hidden"), 1000);
+  setTimeout(() => {
+    analyzing.classList.add("hidden");
+    document.getElementById("match").classList.remove("hidden");
+    clearInterval(loading);
+  }, 5000);
+  setTimeout(() => {
+    document.getElementById("match").classList.add("hidden");
+    document.getElementById("error").classList.remove("hidden");
+  }, 7000);
+  setTimeout(() => {
+    const finalMessage = consequences[Math.floor(Math.random() * consequences.length)];
+    document.getElementById("consequence").textContent = finalMessage;
+    document.getElementById("consequence").classList.remove("hidden");
+  }, 9000);
+</script>
+
 </body>
 </html>
