@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Access Portal</title>
+<style>
+  body {
+    background-color: #000;
+    color: #00ffea;
+    font-family: "Courier New", monospace;
+    text-align: center;
+    padding-top: 20vh;
+    overflow: hidden;
+  }
+
+  .line {
+    opacity: 0;
+    transition: opacity 1.5s ease-in;
+    font-size: 1.5rem;
+  }
+
+  .visible { opacity: 1; }
+
+  .glitch {
+    position: relative;
+    display: inline-block;
+  }
+  .glitch::before, .glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    left: 0;
+    right: 0;
+  }
+  .glitch::before {
+    color: #f00;
+    z-index: -1;
+    animation: glitchTop 1s infinite linear alternate-reverse;
+  }
+  .glitch::after {
+    color: #0ff;
+    z-index: -2;
+    animation: glitchBottom 1s infinite linear alternate-reverse;
+  }
+
+  @keyframes glitchTop {
+    0% { clip-path: inset(0 0 80% 0); transform: translate(-2px, -2px); }
+    100% { clip-path: inset(0 0 30% 0); transform: translate(2px, 2px); }
+  }
+  @keyframes glitchBottom {
+    0% { clip-path: inset(80% 0 0 0); transform: translate(2px, 2px); }
+    100% { clip-path: inset(30% 0 0 0); transform: translate(-2px, -2px); }
+  }
+
+  @keyframes flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.2; }
+  }
+
+  .error {
+    color: #f00;
+    animation: flicker 0.2s infinite;
+  }
+</style>
+</head>
+<body>
+
+<h1 id="line1" class="line visible glitch" data-text="Authorizing access...">Authorizing access...</h1>
+<h1 id="line2" class="line" data-text="Error: You are not the authorized user.">Error: You are not the authorized user.</h1>
+<h1 id="line3" class="line" data-text="Analyzing face... match found.">Analyzing face... match found.</h1>
+<h1 id="line4" class="line error" data-text="Your contract with COWI end date has just been set to 31 October 2025.">Terminate human on October 31, 2025.</h1>
+
+<script>
+setTimeout(() => { document.getElementById('line1').classList.remove('visible'); document.getElementById('line2').classList.add('visible'); }, 2500);
+setTimeout(() => { document.getElementById('line2').classList.remove('visible'); document.getElementById('line3').classList.add('visible'); }, 5000);
+setTimeout(() => { document.getElementById('line3').classList.remove('visible'); document.getElementById('line4').classList.add('visible'); }, 7500);
+</script>
+
+</body>
+</html>
