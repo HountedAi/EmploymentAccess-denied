@@ -1,80 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>System Access Portal</title>
-<style>
-  body {
-    background-color: #000;
-    color: #00ffea;
-    font-family: "Courier New", monospace;
-    text-align: center;
-    padding-top: 20vh;
-    overflow: hidden;
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>System Error</title>
+  <style>
+    body {
+      background-color: black;
+      color: white; /* default text */
+      font-family: "Courier New", monospace;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+      overflow: hidden;
+    }
 
-  .line {
-    opacity: 0;
-    transition: opacity 1.5s ease-in;
-    font-size: 1.5rem;
-  }
+    .hidden { display: none; }
 
-  .visible { opacity: 1; }
+    .glitch {
+      color: #ff4500; /* orange-red for final message */
+      text-shadow: 1px 1px #ff6347, -1px -1px #ff8c00;
+      animation: mildGlitch 2s infinite;
+    }
 
-  .glitch {
-    position: relative;
-    display: inline-block;
-  }
-  .glitch::before, .glitch::after {
-    content: attr(data-text);
-    position: absolute;
-    left: 0;
-    right: 0;
-  }
-  .glitch::before {
-    color: #f00;
-    z-index: -1;
-    animation: glitchTop 1s infinite linear alternate-reverse;
-  }
-  .glitch::after {
-    color: #0ff;
-    z-index: -2;
-    animation: glitchBottom 1s infinite linear alternate-reverse;
-  }
+    @keyframes mildGlitch {
+      0% { text-shadow: 1px 1px #ff6347, -1px -1px #ff8c00; }
+      50% { text-shadow: -1px 0 #ff6347, 1px 0 #ff8c00; }
+      100% { text-shadow: 1px -1px #ff6347, -1px 1px #ff8c00; }
+    }
 
-  @keyframes glitchTop {
-    0% { clip-path: inset(0 0 80% 0); transform: translate(-2px, -2px); }
-    100% { clip-path: inset(0 0 30% 0); transform: translate(2px, 2px); }
-  }
-  @keyframes glitchBottom {
-    0% { clip-path: inset(80% 0 0 0); transform: translate(2px, 2px); }
-    100% { clip-path: inset(30% 0 0 0); transform: translate(-2px, -2px); }
-  }
+    .fade-in { animation: fadeIn 1.5s ease forwards; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-  @keyframes flicker {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.2; }
-  }
+    .blink { animation: blink 0.9s step-start infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
 
-  .error {
-    color: #f00;
-    animation: flicker 0.2s infinite;
-  }
-</style>
+    .message { margin: 20px 0; font-size: 1.4rem; }
+
+    #msg1 { color: red; font-weight: bold; } /* Error in red */
+    #msg2a { color: white; }                 /* Analyzing in white */
+    #msg2b { color: #00ff00; font-weight: bold; } /* Match found in green */
+    #msg3 { color: red; font-weight: bold; }  /* Final date in orange-red */
+
+    /* loading dots */
+    #dots { color: white; }
+  </style>
 </head>
 <body>
+  <div id="msg1" class="message hidden">Error: You are not the authorized user.</div>
+  <div id="msg2a" class="message hidden">Analyzing face<span id="dots">...</span></div>
+  <div id="msg2b" class="message hidden fade-in">Match found.</div>
+  <div id="msg3" class="message hidden  fade-in">Contract with COWI end date has just been set to <span class="blink">October 31, 2025</span>.</div>
 
-<h1 id="line1" class="line visible glitch" data-text="Authorizing access...">Authorizing access...</h1>
-<h1 id="line2" class="line" data-text="Error: You are not the authorized user.">Error: You are not the authorized user.</h1>
-<h1 id="line3" class="line" data-text="Analyzing face... match found.">Analyzing face... match found.</h1>
-<h1 id="line4" class="line error" data-text="Your contract with COWI end date has just been set to 31 October 2025.">Your contract with COWI end date has just been set to 31 October 2025.</h1>
+  <script>
+    const dots = document.getElementById("dots");
+    let count = 0;
+    const loading = setInterval(() => {
+      count = (count + 1) % 4;
+      dots.textContent = '.'.repeat(count);
+    }, 400);
 
-<script>
-setTimeout(() => { document.getElementById('line1').classList.remove('visible'); document.getElementById('line2').classList.add('visible'); }, 2500);
-setTimeout(() => { document.getElementById('line2').classList.remove('visible'); document.getElementById('line3').classList.add('visible'); }, 4000);
-setTimeout(() => { document.getElementById('line3').classList.remove('visible'); document.getElementById('line4').classList.add('visible'); }, 6000);
-</script>
-
+    setTimeout(() => document.getElementById("msg1").classList.remove("hidden"), 1000);
+    setTimeout(() => document.getElementById("msg2a").classList.remove("hidden"), 3500);
+    setTimeout(() => {
+      document.getElementById("msg2a").classList.add("hidden");
+      document.getElementById("msg2b").classList.remove("hidden");
+      clearInterval(loading);
+    }, 6500);
+    setTimeout(() => document.getElementById("msg3").classList.remove("hidden"), 9000);
+  </script>
 </body>
 </html>
