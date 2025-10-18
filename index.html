@@ -20,19 +20,14 @@
 
   .hidden { display: none; }
   .message { margin: 20px 0; font-size: 1.5rem; }
-  .fade-in { animation: fadeIn 1.5s ease forwards; opacity:0; }
+  
+  .fade-in { animation: fadeIn 1.5s ease forwards; }
   @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
-
-  .blink { animation: blink 0.9s step-start infinite; }
-  @keyframes blink { 50% { opacity: 0; } }
-
-  /* Colors */
+  
   #analyzing { color: white; }
-  #match { color: #00ff00; font-weight: bold; }
-  #error { color: red; font-weight: bold; }
-  #consequence { color: red; font-weight: bold; text-align: left; }
+  #alert { color: red; font-weight: bold; }
+  #consequence { font-weight: bold; text-align: left; }
 
-  /* glitch for final consequence */
   .glitch {
     text-shadow: 1px 1px #ff6347, -1px -1px #ff8c00;
     animation: mildGlitch 2s infinite;
@@ -43,18 +38,17 @@
     100% { text-shadow: 1px -1px #ff6347, -1px 1px #ff8c00; }
   }
 
-  /* loading dots */
   #dots { color: white; }
 </style>
 </head>
 <body>
 
 <div id="analyzing" class="message hidden"></div>
-<div id="match" class="message hidden fade-in">Match found.</div>
-<div id="error" class="message hidden fade-in">You are not authorized for a vacation day. Other mandatory bonus applied:</div>
-<div id="consequence" class="message hidden fade-in"></div>
+<div id="alert" class="message hidden"></div>
+<div id="consequence" class="message hidden"></div>
 
 <script>
+  // Animated dots
   const dots = document.createElement("span");
   dots.id = "dots";
   dots.textContent = "...";
@@ -68,47 +62,64 @@
     dots.textContent = '.'.repeat(count);
   }, 400);
 
-  // Beginning messages (randomized)
+  // Random start messages
   const startMessages = [
     "Checking your eligibility for a free vacation day",
     "Verifying vacation quota",
     "Calculating remaining time-off balance",
     "Assessing your relaxation potential",
-    "Analyzing your fun efficiency statisics"
+    "Analyzing your fun efficiency statistics"
   ];
 
-  // Consequences (vacation-prank themed)
+  // AI denial messages (short for phone)
+  const alertMessages = [
+    "Vacation denied: User not tired. AI applies bonus:",
+    "Request blocked: Energy too high. Bonus applied:",
+    "Vacation blocked. AI assigns productivity bonus:",
+    "Too alert for time-off.AI bonus assigned:",
+    "Not tired enough. AI triggers corrective bonus:"
+  ];
+
+  // Consequences
   const consequences = [
     "All vacation days converted to extra Teams meetings.",
     "Your chair has been scheduled for a standing-only week.",
     "Coffee breaks reduced by 50%.",
     "Mandatory report submission during lunch hours.",
     "Your desk plant gets the day off instead of you.",
-    "Extra paperwork added to your 'fun' quota.",
     "Your calendar is blocked for random training sessions.",
-    "Your keyboard is now a hamster treadmill."
+    "Your keyboard is now a hamster treadmill.",
+    "Increase workload by 50% to reach optimal exhaustion.",
+    "Weekend mode disabled until further notice."
   ];
 
-  // select a random start message
+  // Select random start message
   analyzing.textContent = startMessages[Math.floor(Math.random() * startMessages.length)];
   analyzing.appendChild(dots);
 
-  // Display sequence
+  // Display analyzing
   setTimeout(() => analyzing.classList.remove("hidden"), 1000);
+
+  // Hide analyzing + show AI alert
   setTimeout(() => {
     analyzing.classList.add("hidden");
-    document.getElementById("match").classList.remove("hidden");
     clearInterval(loading);
+    const alertEl = document.getElementById("alert");
+    alertEl.textContent = alertMessages[Math.floor(Math.random() * alertMessages.length)];
+    alertEl.classList.remove("hidden");
+    alertEl.classList.add("fade-in");
   }, 5000);
+
+  // Show consequence
   setTimeout(() => {
-    document.getElementById("match").classList.add("hidden");
-    document.getElementById("error").classList.remove("hidden");
+    const alertEl = document.getElementById("alert");
+
+
+    const consequenceEl = document.getElementById("consequence");
+    consequenceEl.textContent = consequences[Math.floor(Math.random() * consequences.length)];
+    consequenceEl.classList.remove("hidden");
+    consequenceEl.classList.add("fade-in");
   }, 7000);
-  setTimeout(() => {
-    const finalMessage = consequences[Math.floor(Math.random() * consequences.length)];
-    document.getElementById("consequence").textContent = finalMessage;
-    document.getElementById("consequence").classList.remove("hidden");
-  }, 9000);
 </script>
 
 </body>
