@@ -20,10 +20,10 @@
 
   .hidden { display: none; }
   .message { margin: 20px 0; font-size: 1.5rem; }
-  
+
   .fade-in { animation: fadeIn 1.5s ease forwards; }
   @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
-  
+
   #analyzing { color: white; }
   #alert { color: red; font-weight: bold; }
   #consequence { font-weight: bold; text-align: left; }
@@ -38,31 +38,31 @@
     100% { text-shadow: 1px -1px #ff6347, -1px 1px #ff8c00; }
   }
 
-  #dots { color: white; }
+  #dots { display:inline-block; width:20px; text-align:left; color:white; }
 </style>
 </head>
 <body>
 
-<div id="analyzing" class="message hidden"></div>
+<div id="analyzing" class="message hidden">
+  <span id="analyzingText"></span><span id="dots"></span>
+</div>
 <div id="alert" class="message hidden"></div>
 <div id="consequence" class="message hidden"></div>
 
 <script>
-  // Animated dots
-  const dots = document.createElement("div");
-  dots.id = "dots";
-  dots.textContent = "...";
-
   const analyzing = document.getElementById("analyzing");
-  analyzing.appendChild(dots);
+  const analyzingText = document.getElementById("analyzingText");
+  const dots = document.getElementById("dots");
+  const alertEl = document.getElementById("alert");
+  const consequenceEl = document.getElementById("consequence");
 
-  let count = 0;
+  // Smooth animated dots — fixed to not disappear
+  let dotCount = 0;
   const loading = setInterval(() => {
-    count = (count + 1) % 4;
-    dots.textContent = '.'.repeat(count);
+    dotCount = (dotCount + 1) % 4;
+    dots.textContent = '.'.repeat(dotCount);
   }, 400);
 
-  // Random start messages
   const startMessages = [
     "Checking your eligibility for a free vacation day",
     "Verifying vacation quota",
@@ -70,15 +70,13 @@
     "Assessing your relaxation potential"
   ];
 
-  // AI denial messages (short for phone)
   const alertMessages = [
     "Vacation denied: User not tired. Instead, AI applies additional bonus:",
-    "Request blocked:User energy is too high.Instead, bonus applied:",
+    "Request blocked: User energy is too high. Instead, bonus applied:",
     "User is too alert for time-off. Instead, bonus assigned:",
     "User not tired enough. Instead, AI triggers corrective bonus:"
   ];
 
-  // Consequences
   const consequences = [
     "All vacation days converted to extra Teams meetings.",
     "Your chair is set to standing-only mode this week to help you reach optimal exhaustion.",
@@ -87,24 +85,24 @@
     "Your desk plant gets the day off instead of you.",
     "Your calendar is blocked for random training sessions.",
     "Increase workload by 50% to reach optimal exhaustion.",
-    "Random 1:1 meetings added to you Calendar",
+    "Random 1:1 meetings added to your Calendar",
     "All notifications set to maximum urgency to keep adrenaline levels high.",
     "Coffee intake limited to one sip per hour",
     "Weekend mode disabled until further notice."
   ];
 
-  // Select random start message
-  analyzing.textContent = startMessages[Math.floor(Math.random() * startMessages.length)];
-  analyzing.appendChild(dots);
+  // Choose a random analyzing message
+  const randomStart = startMessages[Math.floor(Math.random() * startMessages.length)];
+  analyzingText.textContent = randomStart + " ";
 
-  // Display analyzing
+  // Show "analyzing..."
   setTimeout(() => analyzing.classList.remove("hidden"), 1000);
 
   // Hide analyzing + show AI alert
   setTimeout(() => {
-    analyzing.classList.add("hidden");
     clearInterval(loading);
-    const alertEl = document.getElementById("alert");
+    dots.textContent = ''; // stop dots cleanly
+    analyzing.classList.add("hidden");
     alertEl.textContent = alertMessages[Math.floor(Math.random() * alertMessages.length)];
     alertEl.classList.remove("hidden");
     alertEl.classList.add("fade-in");
@@ -112,10 +110,6 @@
 
   // Show consequence
   setTimeout(() => {
-    const alertEl = document.getElementById("alert");
-
-
-    const consequenceEl = document.getElementById("consequence");
     consequenceEl.textContent = consequences[Math.floor(Math.random() * consequences.length)];
     consequenceEl.classList.remove("hidden");
     consequenceEl.classList.add("fade-in");
