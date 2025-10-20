@@ -13,18 +13,20 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     text-align: center;
-    overflow: hidden;
+    overflow-y: auto; /* allow scroll/pull-to-refresh */
+    -webkit-overflow-scrolling: touch; /* smooth on iOS */
+    padding: 20px; /* prevent clipping on small screens */
   }
 
   .hidden { display: none; }
   .message { margin: 20px 0; font-size: 1.5rem; }
 
-  .fade-in { animation: fadeIn 1.5s ease forwards; }
+  .fade-in { animation: fadeIn 1.5s ease forwards; opacity:0; }
   @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
 
-  #analyzing { color: white; }
+  #analyzing { color: white; display: inline-block; }
   #alert { color: red; font-weight: bold; }
   #consequence { font-weight: bold; text-align: left; }
 
@@ -56,13 +58,14 @@
   const alertEl = document.getElementById("alert");
   const consequenceEl = document.getElementById("consequence");
 
-  // Smooth animated dots — fixed to not disappear
+  // Smooth animated dots — independent, do not shift text
   let dotCount = 0;
   const loading = setInterval(() => {
     dotCount = (dotCount + 1) % 4;
     dots.textContent = '.'.repeat(dotCount);
   }, 400);
 
+  // Original messages preserved
   const startMessages = [
     "Checking your eligibility for a free vacation day",
     "Verifying vacation quota",
@@ -91,14 +94,14 @@
     "Weekend mode disabled until further notice."
   ];
 
-  // Choose a random analyzing message
+  // Random starting message
   const randomStart = startMessages[Math.floor(Math.random() * startMessages.length)];
   analyzingText.textContent = randomStart + " ";
 
-  // Show "analyzing..."
+  // Show analyzing with dots
   setTimeout(() => analyzing.classList.remove("hidden"), 1000);
 
-  // Hide analyzing + show AI alert
+  // Hide analyzing + show alert
   setTimeout(() => {
     clearInterval(loading);
     dots.textContent = ''; // stop dots cleanly
